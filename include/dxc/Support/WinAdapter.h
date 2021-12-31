@@ -15,7 +15,13 @@
 #ifndef LLVM_SUPPORT_WIN_ADAPTER_H
 #define LLVM_SUPPORT_WIN_ADAPTER_H
 
-#ifndef _WIN32
+#if !defined(_WIN32) || defined(__MINGW32__)
+
+// For MinGW, clang in GNU mode, Zig, etc. compilers we will emulate ATL types which are not
+// available in the MinGW headers yet.
+#ifdef __MINGW32__
+#include <windows.h>
+#endif // __MINGW32__
 
 #ifdef __cplusplus
 #include <atomic>
@@ -38,6 +44,16 @@
 //                             Begin: Macro Definitions
 //
 //===----------------------------------------------------------------------===//
+// If MinGW, we need to define the uuid macro but nothing else.
+#ifdef __MINGW32__
+#define uuid(id)
+#endif
+// If it is GCC, there is no UUID support and we must emulate it.
+#ifndef __clang__
+#define __EMULATE_UUID 1
+#endif // __clang__
+
+#ifndef __MINGW32__
 #define C_ASSERT(expr) static_assert((expr), "")
 #define ATLASSERT assert
 
@@ -47,11 +63,6 @@
 #define ARRAYSIZE(array) (sizeof(array) / sizeof(array[0]))
 
 #define _countof(a) (sizeof(a) / sizeof(*(a)))
-
-// If it is GCC, there is no UUID support and we must emulate it.
-#ifndef __clang__
-#define __EMULATE_UUID 1
-#endif // __clang__
 
 #ifdef __EMULATE_UUID
 #define __declspec(x)
@@ -211,20 +222,23 @@
 #define UInt32Add UIntAdd
 #define Int32ToUInt32 IntToUInt
 
+#endif // __MINGW32__
 //===--------------------- HRESULT Related Macros -------------------------===//
 
+#define E_NOT_VALID_STATE (HRESULT)0x8007139F
+#define E_BOUNDS (HRESULT)0x8000000B
+
+#ifndef __MINGW32__
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)
 
 #define E_ABORT (HRESULT)0x80004004
 #define E_ACCESSDENIED (HRESULT)0x80070005
-#define E_BOUNDS (HRESULT)0x8000000B
 #define E_FAIL (HRESULT)0x80004005
 #define E_HANDLE (HRESULT)0x80070006
 #define E_INVALIDARG (HRESULT)0x80070057
 #define E_NOINTERFACE (HRESULT)0x80004002
 #define E_NOTIMPL (HRESULT)0x80004001
-#define E_NOT_VALID_STATE (HRESULT)0x8007139F
 #define E_OUTOFMEMORY (HRESULT)0x8007000E
 #define E_POINTER (HRESULT)0x80004003
 #define E_UNEXPECTED (HRESULT)0x8000FFFF
@@ -236,12 +250,14 @@
 #define HRESULT_FROM_WIN32(x)                                                  \
   (HRESULT)(x) <= 0 ? (HRESULT)(x)                                             \
                     : (HRESULT)(((x)&0x0000FFFF) | (7 << 16) | 0x80000000)
+#endif // __MINGW32__
 
 //===----------------------------------------------------------------------===//
 //
 //                         Begin: Disable SAL Annotations
 //
 //===----------------------------------------------------------------------===//
+#ifndef __MINGW32__
 #define _In_
 #define _In_z_
 #define _In_opt_
@@ -341,6 +357,7 @@
 #define __fastcall
 #define __clrcall
 #endif // __GNUC__
+#endif // __MINGW32__
 
 //===----------------------------------------------------------------------===//
 //
@@ -349,6 +366,7 @@
 //===----------------------------------------------------------------------===//
 
 #ifdef __cplusplus
+#ifndef __MINGW32__
 
 typedef unsigned char BYTE, UINT8;
 typedef unsigned char *LPBYTE;
@@ -400,9 +418,11 @@ typedef const void *LPCVOID;
 typedef std::nullptr_t nullptr_t;
 
 typedef signed int HRESULT;
+#endif // __MINGW32__
 
 //===--------------------- Handle Types -----------------------------------===//
 
+#ifndef __MINGW32__
 typedef void *HANDLE;
 
 #define DECLARE_HANDLE(name)                                                   \
@@ -417,9 +437,11 @@ typedef void *HMODULE;
 #define STD_INPUT_HANDLE ((DWORD)-10)
 #define STD_OUTPUT_HANDLE ((DWORD)-11)
 #define STD_ERROR_HANDLE ((DWORD)-12)
+#endif // __MINGW32__
 
 //===--------------------- ID Types and Macros for COM --------------------===//
 
+#ifndef __MINGW32__
 #ifdef __EMULATE_UUID
 struct GUID
 #else  // __EMULATE_UUID
@@ -467,9 +489,11 @@ inline bool IsEqualIID(REFIID riid1, REFIID riid2) {
 inline bool IsEqualCLSID(REFCLSID rclsid1, REFCLSID rclsid2) {
   return IsEqualGUID(rclsid1, rclsid2);
 }
+#endif // __MINGW32__
 
 //===--------------------- Struct Types -----------------------------------===//
 
+#ifndef __MINGW32__
 typedef struct _FILETIME {
   DWORD dwLowDateTime;
   DWORD dwHighDateTime;
@@ -541,9 +565,11 @@ enum tagSTATFLAG {
   STATFLAG_NONAME = 1,
   STATFLAG_NOOPEN = 2
 };
+#endif // __MINGW32__
 
 //===--------------------- UUID Related Macros ----------------------------===//
 
+#ifndef __MINGW32__
 #ifdef __EMULATE_UUID
 
 // The following macros are defined to facilitate the lack of 'uuid' on Linux.
@@ -610,9 +636,11 @@ template <typename T> inline void **IID_PPV_ARGS_Helper(T **pp) {
 #define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
 
 #endif // __EMULATE_UUID
+#endif // __MINGW32__
 
 //===--------------------- COM Interfaces ---------------------------------===//
 
+#ifndef __MINGW32__
 CROSS_PLATFORM_UUIDOF(IUnknown, "00000000-0000-0000-C000-000000000046")
 struct IUnknown {
   IUnknown() : m_count(0) {};
@@ -668,6 +696,7 @@ struct IStream : public ISequentialStream {
 
   virtual HRESULT Clone(IStream **ppstm) = 0;
 };
+#endif // __MINGW32__
 
 //===--------------------- COM Pointer Types ------------------------------===//
 
@@ -930,9 +959,11 @@ public:
 
 //===--------------------------- BSTR Allocation --------------------------===//
 
+#ifndef __MINGW32__
 void SysFreeString(BSTR bstrString);
 // Allocate string with length prefix
 BSTR SysAllocStringLen(const OLECHAR *strIn, UINT ui);
+#endif // __MINGW32__
 
 //===--------------------- UTF-8 Related Types ----------------------------===//
 
@@ -1024,6 +1055,6 @@ private:
 
 #endif // __cplusplus
 
-#endif // _WIN32
+#endif // !defined(_WIN32) || defined(__MINGW32__)
 
 #endif // LLVM_SUPPORT_WIN_ADAPTER_H
