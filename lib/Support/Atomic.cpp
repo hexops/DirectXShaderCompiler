@@ -16,12 +16,6 @@
 
 using namespace llvm;
 
-#if defined(_MSC_VER)
-#include <Intrin.h>
-#include <windows.h>
-#undef MemoryFence
-#endif
-
 #if defined(__GNUC__) || (defined(__IBMCPP__) && __IBMCPP__ >= 1210)
 #define GNU_ATOMICS
 #endif
