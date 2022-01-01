@@ -53,9 +53,10 @@
 #define __EMULATE_UUID 1
 #endif // __clang__
 
+#define ATLASSERT assert
+
 #ifndef __MINGW32__
 #define C_ASSERT(expr) static_assert((expr), "")
-#define ATLASSERT assert
 
 #define CoTaskMemAlloc malloc
 #define CoTaskMemFree free
@@ -219,10 +220,11 @@
 #define DxcEtw_DxcValidation_Start()
 #define DxcEtw_DxcValidation_Stop(hr)
 
+#endif // __MINGW32__
+
 #define UInt32Add UIntAdd
 #define Int32ToUInt32 IntToUInt
 
-#endif // __MINGW32__
 //===--------------------- HRESULT Related Macros -------------------------===//
 
 #define E_NOT_VALID_STATE (HRESULT)0x8007139F
