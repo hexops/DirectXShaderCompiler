@@ -64,7 +64,7 @@ template <class T> void swap(CComHeapPtr<T> &a, CComHeapPtr<T> &b) {
 
 #endif // defined(_MSC_VER) || defined(__MINGW32__)
 
-#ifdef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW32__)
 #ifdef __cplusplus
 // Define operator overloads to enable bit operations on enum values that are
 // used to define flags. Use DEFINE_ENUM_FLAG_OPERATORS(YOUR_TYPE) to enable these
@@ -113,4 +113,4 @@ inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) { return (ENUMTYPE &)(((_
 #define DEFINE_ENUM_FLAG_OPERATORS(ENUMTYPE) // NOP, C allows these operators.
 #endif
 
-#endif // defined(_MSC_VER) || defined(__MINGW32__)
+#endif // !defined(_MSC_VER) && !defined(__MINGW32__)

@@ -18,6 +18,7 @@
 
 #ifdef __MINGW32__
 #define __int64 long long
+#define NOMINMAX 1
 #include <windows.h>
 // HACK: Pretend we're CYGWIN when including intrin.h, otherwise the MinGW headers will not know
 // that strcat and other conflicting symbols are already defined.
@@ -28,6 +29,7 @@
 
 #if defined(_MSC_VER)
 #include <Intrin.h>
+#define NOMINMAX 1
 #include <windows.h>
 #undef MemoryFence
 #endif // _MSC_VER
