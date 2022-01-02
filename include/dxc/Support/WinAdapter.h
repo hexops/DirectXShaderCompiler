@@ -71,9 +71,9 @@
 #endif // __MINGW32__
 
 // If it is GCC, there is no UUID support and we must emulate it.
-#ifndef __clang__
+#if !defined(__clang__) && !defined(__MINGW32__)
 #define __EMULATE_UUID 1
-#endif // __clang__
+#endif // !defined(__clang__) && !defined(__MINGW32__)
 
 #define ATLASSERT assert
 
@@ -593,6 +593,8 @@ enum tagSTATFLAG {
 
 //===--------------------- UUID Related Macros ----------------------------===//
 
+#if defined(__EMULATE_UUID) || defined(__MINGW32__)
+
 constexpr uint8_t nybble_from_hex(char c) {
   return ((c >= '0' && c <= '9')
               ? (c - '0')
@@ -661,6 +663,7 @@ template <typename T> inline void **IID_PPV_ARGS_Helper(T **pp) {
 
 #endif // __EMULATE_UUID
 #endif // __MINGW32__
+#endif // defined(__EMULATE_UUID) || defined(__MINGW32__)
 
 //===--------------------- COM Interfaces ---------------------------------===//
 
