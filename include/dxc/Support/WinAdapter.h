@@ -46,8 +46,30 @@
 //===----------------------------------------------------------------------===//
 // If MinGW, we need to define the uuid macro but nothing else.
 #ifdef __MINGW32__
-#define uuid(id)
-#endif
+#include <guiddef.h>
+
+// Since type declaration headers (dxcapi.h) are pulled in for multiple compilation units (e.g.
+// both dxcapi.use.cpp and FileIOHelper.cpp pull it in), and because MinGW UUID declarations need
+// to export a customization of the __mingw_uuidof<type>, we would run into duplicate symbols
+// across compilation units. To workaround this, we instead define CROSS_PLATFORM_UUIDOF as nothing
+// and then invoke MINGW_UUIDOF in dxcapi.use.cpp explicitly for each COM interface we wish to
+// export as our public API.
+#define CROSS_PLATFORM_UUIDOF(type, spec)
+
+#define MINGW_UUIDOF(type, spec)                                              \
+    extern "C++" {                                                            \
+    struct __declspec(uuid(spec)) type;                                       \
+    template<> const GUID &__mingw_uuidof<type>() {                    \
+        static constexpr IID __uuid_inst = guid_from_string(spec);            \
+        return __uuid_inst;                                                   \
+    }                                                                         \
+    template<> const GUID &__mingw_uuidof<type*>() {                   \
+        return __mingw_uuidof<type>();                                        \
+    }                                                                         \
+    }
+
+#endif // __MINGW32__
+
 // If it is GCC, there is no UUID support and we must emulate it.
 #ifndef __clang__
 #define __EMULATE_UUID 1
@@ -201,6 +223,8 @@
 
 #define StringCchCopyW(dst, n, src) wcsncpy(dst, src, n)
 
+#endif // __MINGW32__
+
 #define OutputDebugStringW(msg) fputws(msg, stderr)
 
 #define OutputDebugStringA(msg) fputs(msg, stderr)
@@ -219,8 +243,6 @@
 #define DxcEtw_DXCompilerPreprocess_Stop(hr)
 #define DxcEtw_DxcValidation_Start()
 #define DxcEtw_DxcValidation_Stop(hr)
-
-#endif // __MINGW32__
 
 #define UInt32Add UIntAdd
 #define Int32ToUInt32 IntToUInt
@@ -571,11 +593,6 @@ enum tagSTATFLAG {
 
 //===--------------------- UUID Related Macros ----------------------------===//
 
-#ifndef __MINGW32__
-#ifdef __EMULATE_UUID
-
-// The following macros are defined to facilitate the lack of 'uuid' on Linux.
-
 constexpr uint8_t nybble_from_hex(char c) {
   return ((c >= '0' && c <= '9')
               ? (c - '0')
@@ -609,6 +626,11 @@ constexpr GUID guid_from_string(const char str[37]) {
                byte_from_hexstr(str + 28), byte_from_hexstr(str + 30),
                byte_from_hexstr(str + 32), byte_from_hexstr(str + 34)}};
 }
+
+#ifndef __MINGW32__
+#ifdef __EMULATE_UUID
+
+// The following macros are defined to facilitate the lack of 'uuid' on Linux.
 
 template <typename interface> inline GUID __emulated_uuidof();
 

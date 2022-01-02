@@ -16,6 +16,7 @@
 #define LLVM_SUPPORT_WINFUNCTIONS_H
 
 #ifdef __MINGW32__
+#include "dxc/Support/WinAdapter.h"
 HRESULT UInt32Mult(UINT a, UINT b, UINT *out);
 #endif
 
