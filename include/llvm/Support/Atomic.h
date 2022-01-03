@@ -27,13 +27,6 @@
 #undef __CYGWIN__
 #endif // __MINGW32__
 
-#if defined(_MSC_VER)
-#include <Intrin.h>
-#define NOMINMAX 1
-#include <windows.h>
-#undef MemoryFence
-#endif // _MSC_VER
-
 namespace llvm {
   namespace sys {
     void MemoryFence();
