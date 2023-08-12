@@ -21,6 +21,7 @@
 // available in the MinGW headers yet.
 #ifdef __MINGW32__
 #include <windows.h>
+#include <unknwn.h>
 #endif // __MINGW32__
 
 #ifdef __cplusplus
