@@ -818,8 +818,8 @@ TimeInMillis GetTimeInMillis() {
   //   GetSystemTimeAsFileTime()?
   GetSystemTime(&now_systime);
   if (SystemTimeToFileTime(&now_systime, &now_filetime)) {
-    now_int64.LowPart = now_filetime.dwLowDateTime;
-    now_int64.HighPart = now_filetime.dwHighDateTime;
+    now_int64.u.LowPart = now_filetime.dwLowDateTime;
+    now_int64.u.HighPart = now_filetime.dwHighDateTime;
     now_int64.QuadPart = (now_int64.QuadPart / kTenthMicrosInMilliSecond) -
       kJavaEpochToWinFileTimeDelta;
     return now_int64.QuadPart;

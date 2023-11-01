@@ -24,6 +24,34 @@ typedef _Return_type_success_(return >= 0) long HRESULT;
 #endif // !_HRESULT_DEFINED
 #endif // _WIN32
 
+//#------------------
+//# Mach change start
+//#------------------
+#ifdef __clang__ // Zig
+#if defined(_MSC_VER) || defined(_WIN32)
+#define D3D_NAME_STENCIL_REF ((D3D_NAME)69)
+#define D3D_NAME_INNER_COVERAGE	((D3D_NAME)70)
+#endif // defined(_MSC_VER) || defined(_WIN32)
+
+#define D3D12_SHVER_GET_TYPE(_Version) \
+    (((_Version) >> 16) & 0xffff)
+#define D3D12_SHVER_GET_MAJOR(_Version) \
+    (((_Version) >> 4) & 0xf)
+#define D3D12_SHVER_GET_MINOR(_Version) \
+    (((_Version) >> 0) & 0xf)
+
+#define DxcEtw_DXCompilerInitialization_Start()
+#define DxcEtw_DXCompilerInitialization_Stop(e)
+#define DxcEtw_DXCompilerShutdown_Start()
+#define DxcEtw_DXCompilerShutdown_Stop(e)
+#define EventRegisterMicrosoft_Windows_DXCompiler_API()
+#define EventUnregisterMicrosoft_Windows_DXCompiler_API()
+
+#endif // __clang__ // Zig
+//#------------------
+//# Mach change end
+//#------------------
+
 #include "dxc/Support/exception.h"
 #include "dxc/WinAdapter.h"
 #include <stdarg.h>

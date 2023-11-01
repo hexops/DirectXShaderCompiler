@@ -57,14 +57,14 @@ inline HRESULT ReadDataFromFile(LPCWSTR filename, byte **data, UINT *size) {
     throw std::exception();
   }
 
-  if (fileInfo.EndOfFile.HighPart != 0) {
+  if (fileInfo.EndOfFile.u.HighPart != 0) {
     throw std::exception();
   }
 
-  *data = reinterpret_cast<byte *>(malloc(fileInfo.EndOfFile.LowPart));
-  *size = fileInfo.EndOfFile.LowPart;
+  *data = reinterpret_cast<byte *>(malloc(fileInfo.EndOfFile.u.LowPart));
+  *size = fileInfo.EndOfFile.u.LowPart;
 
-  if (!ReadFile(file.Get(), *data, fileInfo.EndOfFile.LowPart, nullptr,
+  if (!ReadFile(file.Get(), *data, fileInfo.EndOfFile.u.LowPart, nullptr,
                 nullptr)) {
     throw std::exception();
   }
