@@ -20,7 +20,13 @@
 #include <endian.h>
 #else
 #if !defined(BYTE_ORDER) && !defined(LLVM_ON_WIN32)
-#include <machine/endian.h>
+//#------------------
+//# Mach change start
+//#------------------
+// #include <machine/endian.h>
+//#------------------
+//# Mach change end
+//#------------------
 #endif
 #endif
 

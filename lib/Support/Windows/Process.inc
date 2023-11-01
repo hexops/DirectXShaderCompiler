@@ -51,8 +51,16 @@ using namespace sys;
 
 static TimeValue getTimeValueFromFILETIME(FILETIME Time) {
   ULARGE_INTEGER TimeInteger;
-  TimeInteger.LowPart = Time.dwLowDateTime;
-  TimeInteger.HighPart = Time.dwHighDateTime;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // TimeInteger.LowPart = Time.dwLowDateTime;
+  // TimeInteger.HighPart = Time.dwHighDateTime;
+  TimeInteger.u.LowPart = Time.dwLowDateTime;
+  TimeInteger.u.HighPart = Time.dwHighDateTime;
+  //#------------------
+  //# Mach change end
+  //#------------------
 
   // FILETIME's are # of 100 nanosecond ticks (1/10th of a microsecond)
   return TimeValue(

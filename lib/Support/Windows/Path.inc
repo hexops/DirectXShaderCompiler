@@ -154,8 +154,16 @@ UniqueID file_status::getUniqueID() const {
 
 TimeValue file_status::getLastModificationTime() const {
   ULARGE_INTEGER UI;
-  UI.LowPart = LastWriteTimeLow;
-  UI.HighPart = LastWriteTimeHigh;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // UI.LowPart = LastWriteTimeLow;
+  // UI.HighPart = LastWriteTimeHigh;
+  UI.u.LowPart = LastWriteTimeLow;
+  UI.u.HighPart = LastWriteTimeHigh;
+  //#------------------
+  //# Mach change end
+  //#------------------
 
   TimeValue Ret;
   Ret.fromWin32Time(UI.QuadPart);
@@ -449,8 +457,16 @@ std::error_code setLastModificationAndAccessTime(int FD, TimeValue Time) {
   ULARGE_INTEGER UI;
   UI.QuadPart = Time.toWin32Time();
   FILETIME FT;
-  FT.dwLowDateTime = UI.LowPart;
-  FT.dwHighDateTime = UI.HighPart;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // FT.dwLowDateTime = UI.LowPart;
+  // FT.dwHighDateTime = UI.HighPart;
+  FT.dwLowDateTime = UI.u.LowPart;
+  FT.dwHighDateTime = UI.u.HighPart;
+  //#------------------
+  //# Mach change end
+  //#------------------
   HANDLE FileHandle = reinterpret_cast<HANDLE>(_get_osfhandle(FD));
   if (!SetFileTime(FileHandle, NULL, &FT, &FT))
     return mapWindowsError(::GetLastError());

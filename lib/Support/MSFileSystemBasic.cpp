@@ -70,8 +70,16 @@ static HRESULT CopyStatStg(const STATSTG *statStg,
   lpFindFileData->ftCreationTime = statStg->ctime;
   lpFindFileData->ftLastAccessTime = statStg->atime;
   lpFindFileData->ftLastWriteTime = statStg->mtime;
-  lpFindFileData->nFileSizeLow = statStg->cbSize.LowPart;
-  lpFindFileData->nFileSizeHigh = statStg->cbSize.HighPart;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // lpFindFileData->nFileSizeLow = statStg->cbSize.LowPart;
+  // lpFindFileData->nFileSizeHigh = statStg->cbSize.HighPart;
+  lpFindFileData->nFileSizeLow = statStg->cbSize.u.LowPart;
+  lpFindFileData->nFileSizeHigh = statStg->cbSize.u.HighPart;
+  //#------------------
+  //# Mach change end
+  //#------------------
   if (statStg->pwcsName != nullptr) {
     IFC(StringCchCopyW(lpFindFileData->cFileName,
                        _countof(lpFindFileData->cFileName), statStg->pwcsName));
@@ -842,8 +850,16 @@ long MSFileSystemForIface::lseek(int fd, long offset, int origin) throw() {
   }
 
   GetHandleStream(GetHandleForFD(fd), &stream);
-  li.HighPart = 0;
-  li.LowPart = offset;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // li.HighPart = 0;
+  // li.LowPart = offset;
+  li.u.HighPart = 0;
+  li.u.LowPart = offset;
+  //#------------------
+  //# Mach change end
+  //#------------------
   IFC(stream->Seek(li, origin, &uli));
 
 Cleanup:
@@ -852,12 +868,26 @@ Cleanup:
     return -1;
   }
 
-  if (uli.HighPart > 0) {
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // if (uli.HighPart > 0) {
+  if (uli.u.HighPart > 0) {
+  //#------------------
+  //# Mach change end
+  //#------------------
     errno = EOVERFLOW;
     return -1;
   }
 
-  return uli.LowPart;
+  //#------------------
+  //# Mach change start
+  //#------------------
+  // return uli.LowPart;
+  return uli.u.LowPart;
+  //#------------------
+  //# Mach change end
+  //#------------------
 }
 
 int MSFileSystemForIface::setmode(int fd, int mode) throw() { return 0; }

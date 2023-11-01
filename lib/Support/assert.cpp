@@ -14,6 +14,16 @@
 #include "dxc/Support/Global.h"
 #include "windows.h"
 
+//#------------------
+//# Mach change start
+//#------------------
+#ifdef __clang__ // Zig
+#define OutputDebugFormatA(...) fprintf(stderr, __VA_ARGS__)
+#endif // __clang__ // Zig
+//#------------------
+//# Mach change end
+//#------------------
+
 void llvm_assert(const char *_Message, const char *_File, unsigned _Line,
                  const char *_Function) {
   OutputDebugFormatA("Error: assert(%s)\nFile:\n%s(%d)\nFunc:\t%s\n", _Message,

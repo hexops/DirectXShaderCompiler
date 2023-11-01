@@ -45,7 +45,13 @@ set(LLVM_LINK_COMPONENTS
 set(SOURCES
   dxcapi.cpp
   DXCompiler.cpp
-  DXCompiler.rc
+  #------------------
+  # Mach change start
+  #------------------
+  # DXCompiler.rc
+  #------------------
+  # Mach change end
+  #------------------
   DXCompiler.def
   dxillib.cpp
   dxcutil.cpp

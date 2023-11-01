@@ -43,6 +43,13 @@ These values need to be the same everywhere that windows headers are included.
 #include "dxc/Support/WinIncludes.h"
 #include <system_error>
 #include <synchapi.h>
+//#------------------
+//# Mach change start
+//#------------------
+#include <windows.h>
+//#------------------
+//# Mach change end
+//#------------------
 #include <wincrypt.h>
 #include <cassert>
 #include <string>

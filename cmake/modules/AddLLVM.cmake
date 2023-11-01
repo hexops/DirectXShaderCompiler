@@ -16,7 +16,13 @@ function(llvm_update_compile_flags name)
     endif()
   else()
     if(LLVM_COMPILER_IS_GCC_COMPATIBLE)
-      list(APPEND LLVM_COMPILE_FLAGS "-fno-exceptions")
+      #------------------
+      # Mach change start
+      #------------------
+      # list(APPEND LLVM_COMPILE_FLAGS "-fno-exceptions")
+      #------------------
+      # Mach change end
+      #------------------
     elseif(MSVC)
       list(APPEND LLVM_COMPILE_DEFINITIONS _HAS_EXCEPTIONS=0)
       list(APPEND LLVM_COMPILE_FLAGS "/EHs-c-")

@@ -4,29 +4,53 @@
 
 # Create the header in a temporary file and only update when necessary,
 # to avoid invalidating targets that depend on it.
+#------------------
+# Mach change start
+#------------------
+# add_custom_command(
+#   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
+#   COMMAND mc -r ${CMAKE_CURRENT_BINARY_DIR} -h ${CMAKE_CURRENT_BINARY_DIR} -p DxcRuntimeEtw_ -um -z tmpdxcruntimeetw ${CMAKE_CURRENT_SOURCE_DIR}/DxcRuntime.man
+#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/DxcRuntime.man
+#   COMMENT "Building instrumentation manifest ..."
+# )
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
-  COMMAND mc -r ${CMAKE_CURRENT_BINARY_DIR} -h ${CMAKE_CURRENT_BINARY_DIR} -p DxcRuntimeEtw_ -um -z tmpdxcruntimeetw ${CMAKE_CURRENT_SOURCE_DIR}/DxcRuntime.man
+  COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/DxcRuntime.man
   COMMENT "Building instrumentation manifest ..."
 )
+#------------------
+# Mach change end
+#------------------
+#------------------
+# Mach change start
+#------------------
+# add_custom_command(
+#   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h
+#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
+#         ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h
+#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.rc
+#         ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.rc
+#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetwTEMP.bin
+#         ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtwtemp.BIN
+#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw_msg00001.bin
+#         ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw_msg00001.bin
+#   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
+#   COMMENT "Updating instrumentation manifest ..."
+# )
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
-        ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.rc
-        ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.rc
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetwTEMP.bin
-        ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtwtemp.BIN
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw_msg00001.bin
-        ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw_msg00001.bin
+  COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tmpdxcruntimeetw.h
   COMMENT "Updating instrumentation manifest ..."
 )
+#------------------
+# Mach change end
+#------------------
 
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.h PROPERTIES GENERATED 1)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/DxcRuntimeEtw.rc PROPERTIES GENERATED 1)

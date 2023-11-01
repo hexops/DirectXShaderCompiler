@@ -499,9 +499,15 @@ if( CLANG_INCLUDE_TESTS OR HLSL_INCLUDE_TESTS ) # HLSL Change
       clang_unit_site_config=${CMAKE_CURRENT_BINARY_DIR}/test/Unit/lit.site.cfg
       )
   endif()
-  if (CLANG_INCLUDE_TESTS) # HLSL Change - respect variable for clang tests
-    add_subdirectory(test)
-  endif()
+  #------------------
+  # Mach change start
+  #------------------
+  # if (CLANG_INCLUDE_TESTS) # HLSL Change - respect variable for clang tests
+  #   add_subdirectory(test)
+  # endif()
+  #------------------
+  # Mach change end
+  #------------------
 
   if(CLANG_BUILT_STANDALONE)
     # Add a global check rule now that all subdirectories have been traversed

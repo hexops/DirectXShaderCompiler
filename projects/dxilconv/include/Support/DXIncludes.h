@@ -30,6 +30,13 @@
 #include "dxc/Support/d3dx12.h"
 #include "DxbcSignatures.h"
 #include <d3dcompiler.h>
+//#------------------
+//# Mach change start
+//#------------------
+#include <windows.h>
+//#------------------
+//# Mach change end
+//#------------------
 #include <wincrypt.h>
 
 #ifndef DECODE_D3D10_SB_TOKENIZED_PROGRAM_TYPE
