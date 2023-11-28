@@ -17,6 +17,9 @@
 
 // Mach change start
 #include "ZigGNUWinAdapter.h"
+#include <basetsd.h>
+#undef interface
+#undef HeapFree
 // Mach change end
 
 #ifndef _WIN32
@@ -44,7 +47,7 @@
 //                             Begin: Macro Definitions
 //
 //===----------------------------------------------------------------------===//
-#define C_ASSERT(expr) static_assert((expr), "")
+// #define C_ASSERT(expr) static_assert((expr), "")
 #define ATLASSERT assert
 
 #define CoTaskMemAlloc malloc
@@ -72,11 +75,11 @@
 #define STDMETHODCALLTYPE
 #define STDMETHODIMP_(type) type STDMETHODCALLTYPE
 #define STDMETHODIMP STDMETHODIMP_(HRESULT)
-#define STDMETHOD_(type, name) virtual STDMETHODIMP_(type) name
-#define STDMETHOD(name) STDMETHOD_(HRESULT, name)
+// #define STDMETHOD_(type, name) virtual STDMETHODIMP_(type) name
+// #define STDMETHOD(name) STDMETHOD_(HRESULT, name)
 #define EXTERN_C extern "C"
 
-#define UNREFERENCED_PARAMETER(P) (void)(P)
+// #define UNREFERENCED_PARAMETER(P) (void)(P)
 
 #define RtlEqualMemory(Destination, Source, Length)                            \
   (!memcmp((Destination), (Source), (Length)))
@@ -92,8 +95,8 @@
 #define FillMemory RtlFillMemory
 #define ZeroMemory RtlZeroMemory
 
-#define FALSE 0
-#define TRUE 1
+// #define FALSE 0
+// #define TRUE 1
 
 // We ignore the code page completely on Linux.
 #define GetConsoleOutputCP() 0
@@ -223,18 +226,18 @@
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)
 
-#define E_ABORT (HRESULT)0x80004004
-#define E_ACCESSDENIED (HRESULT)0x80070005
+//#define E_ABORT (HRESULT)0x80004004
+// #define E_ACCESSDENIED (HRESULT)0x80070005
 #define E_BOUNDS (HRESULT)0x8000000B
-#define E_FAIL (HRESULT)0x80004005
-#define E_HANDLE (HRESULT)0x80070006
-#define E_INVALIDARG (HRESULT)0x80070057
-#define E_NOINTERFACE (HRESULT)0x80004002
+// #define E_FAIL (HRESULT)0x80004005
+// #define E_HANDLE (HRESULT)0x80070006
+// #define E_INVALIDARG (HRESULT)0x80070057
+// #define E_NOINTERFACE (HRESULT)0x80004002
 #define E_NOTIMPL (HRESULT)0x80004001
 #define E_NOT_VALID_STATE (HRESULT)0x8007139F
-#define E_OUTOFMEMORY (HRESULT)0x8007000E
-#define E_POINTER (HRESULT)0x80004003
-#define E_UNEXPECTED (HRESULT)0x8000FFFF
+// #define E_OUTOFMEMORY (HRESULT)0x8007000E
+// #define E_POINTER (HRESULT)0x80004003
+// #define E_UNEXPECTED (HRESULT)0x8000FFFF
 
 #define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
 #define FAILED(hr) (((HRESULT)(hr)) < 0)
@@ -273,8 +276,8 @@
 #define _COM_Outptr_result_maybenull_
 #define _COM_Outptr_opt_result_maybenull_
 
-#define THIS_
-#define THIS
+// #define THIS_
+// #define THIS
 #define PURE = 0
 
 #define _Maybenull_
@@ -303,11 +306,14 @@
 typedef unsigned char BYTE, UINT8;
 typedef unsigned char *LPBYTE;
 
+#ifndef __APPLE__
 typedef BYTE BOOLEAN;
 typedef BOOLEAN *PBOOLEAN;
 
 typedef bool BOOL;
+#endif
 typedef BOOL *LPBOOL;
+#ifndef __APPLE__
 
 typedef int INT;
 typedef long LONG;
@@ -317,6 +323,7 @@ typedef long long LONGLONG;
 typedef long long LONG_PTR;
 typedef unsigned long long ULONG_PTR;
 typedef unsigned long long ULONGLONG;
+#endif
 
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
@@ -350,7 +357,9 @@ typedef const void *LPCVOID;
 
 typedef std::nullptr_t nullptr_t;
 
+#ifndef __APPLE__
 typedef signed int HRESULT;
+#endif // __APPLE__
 
 //===--------------------- Handle Types -----------------------------------===//
 
@@ -372,6 +381,7 @@ typedef void *HMODULE;
 
 //===--------------------- ID Types and Macros for COM --------------------===//
 
+#ifndef __APPLE__
 #ifdef __EMULATE_UUID
 struct GUID
 #else  // __EMULATE_UUID
@@ -394,8 +404,9 @@ typedef const GUID &REFGUID;
 typedef const GUID &REFCLSID;
 
 typedef GUID IID;
+#endif // __APPLE__
 typedef IID *LPIID;
-typedef const IID &REFIID;
+//typedef const IID &REFIID;
 inline bool IsEqualGUID(REFGUID rguid1, REFGUID rguid2) {
   // Optimization:
   if (&rguid1 == &rguid2)
@@ -404,6 +415,7 @@ inline bool IsEqualGUID(REFGUID rguid1, REFGUID rguid2) {
   return !memcmp(&rguid1, &rguid2, sizeof(GUID));
 }
 
+#ifndef __APPLE__
 inline bool operator==(REFGUID guidOne, REFGUID guidOther) {
   return !!IsEqualGUID(guidOne, guidOther);
 }
@@ -411,6 +423,7 @@ inline bool operator==(REFGUID guidOne, REFGUID guidOther) {
 inline bool operator!=(REFGUID guidOne, REFGUID guidOther) {
   return !(guidOne == guidOther);
 }
+#endif // __APPLE__
 
 inline bool IsEqualIID(REFIID riid1, REFIID riid2) {
   return IsEqualGUID(riid1, riid2);
@@ -454,6 +467,7 @@ typedef struct _WIN32_FIND_DATAW {
   WCHAR cAlternateFileName[14];
 } WIN32_FIND_DATAW, *PWIN32_FIND_DATAW, *LPWIN32_FIND_DATAW;
 
+#ifndef __APPLE__
 typedef union _LARGE_INTEGER {
   struct {
     DWORD LowPart;
@@ -473,8 +487,10 @@ typedef union _ULARGE_INTEGER {
 } ULARGE_INTEGER;
 
 typedef ULARGE_INTEGER *PULARGE_INTEGER;
+#endif // __APPLE__
 
-typedef struct tagSTATSTG {
+// typedef struct tagSTATSTG {
+typedef struct STATSTG {
   LPOLESTR pwcsName;
   DWORD type;
   ULARGE_INTEGER cbSize;
@@ -556,13 +572,16 @@ template <typename interface> inline GUID __emulated_uuidof();
   struct __declspec(uuid(spec)) interface;
 #endif
 
+#ifndef __APPLE__
 template <typename T> inline void **IID_PPV_ARGS_Helper(T **pp) {
   return reinterpret_cast<void **>(pp);
 }
 #define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
+#endif // __APPLE__
 
 #endif // __EMULATE_UUID
 
+#ifndef __APPLE__
 // Needed for d3d headers, but fail to create actual interfaces
 #define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8)           \
   const GUID name = {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}
@@ -570,6 +589,7 @@ template <typename T> inline void **IID_PPV_ARGS_Helper(T **pp) {
 #define MIDL_INTERFACE(x) struct DECLSPEC_UUID(x)
 #define DECLARE_INTERFACE(iface) struct iface
 #define DECLARE_INTERFACE_(iface, parent) DECLARE_INTERFACE(iface) : parent
+#endif // __APPLE__
 
 //===--------------------- COM Interfaces ---------------------------------===//
 

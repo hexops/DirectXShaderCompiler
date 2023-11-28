@@ -71,6 +71,9 @@ template <class T> void swap(CComHeapPtr<T> &a, CComHeapPtr<T> &b) {
 // used to define flags. Use DEFINE_ENUM_FLAG_OPERATORS(YOUR_TYPE) to enable
 // these operators on YOUR_TYPE.
 extern "C++" {
+#include <basetsd.h>
+#undef interface
+#ifndef __APPLE__
 template <size_t S> struct _ENUM_FLAG_INTEGER_FOR_SIZE;
 
 template <> struct _ENUM_FLAG_INTEGER_FOR_SIZE<1> { typedef int8_t type; };
@@ -83,6 +86,7 @@ template <> struct _ENUM_FLAG_INTEGER_FOR_SIZE<4> { typedef int32_t type; };
 template <class T> struct _ENUM_FLAG_SIZED_INTEGER {
   typedef typename _ENUM_FLAG_INTEGER_FOR_SIZE<sizeof(T)>::type type;
 };
+#endif // __APPLE__
 }
 #define DEFINE_ENUM_FLAG_OPERATORS(ENUMTYPE)                                   \
   extern "C++" {                                                               \
